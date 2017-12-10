@@ -4,8 +4,16 @@ import math as m
 import imageio
 from scipy import misc
 
+# This is the main class encapsulating all simulation methods
 class wave_simulation_AI:
 
+    # Constructor of the class. It takes the following parameters:
+    # dx_in - size of one pixel in the simulation grid
+    # dt_in - time step
+    # sz_x_in - height of the simulation grid / pixels
+    # sz_y_in - width of the simulation grid / pixels
+    # steps_in - number of steps in the simulation
+    # broadcast_func_in - function defining the speed of wave propagation and the elements broadcasting the waves
     def __init__(self, dx_in, dt_in, sz_x_in, sz_y_in, steps_in, broadcast_func_in):
         self.dx = dx_in
         self.dt = dt_in
@@ -14,6 +22,10 @@ class wave_simulation_AI:
         self.steps = steps_in
         self.broadcast_func = broadcast_func_in
 
+    # Inplementation of the laplace operator that is used in the wave equation
+    # It takes the following parameters:
+    # u_array - grid containing the displacement values
+    # dx - step size to be used in the aproximation fo the second derivative
     def Laplace(self, u_array, dx):
         sz_x = u_array.shape[0]
         sz_y = u_array.shape[1]
@@ -30,6 +42,9 @@ class wave_simulation_AI:
 
         return (dx2 + dy2)
 
+    # A simple edge detector intended for signification of the steps in the refractive index
+    # It takes the following parameters:
+    # c_array - The grid contining the wave propagation speed values for every pixel
     def Edge_detect(self, c_array):
 
         dx = np.zeros((sz_x, sz_y), float)
@@ -40,6 +55,7 @@ class wave_simulation_AI:
 
         return (contour)
 
+    # The method that actually executes the simulation
     def run(self):
 
         u_array = np.zeros((self.sz_x, self.sz_y), float)
@@ -64,8 +80,6 @@ class wave_simulation_AI:
             arr_new = u_array
             arr_new[b_el_mask == 1] = 0
 
-            #print(u_array[240, 215])
-
             arr_new_r = np.maximum(arr_new, 0) / np.max(np.maximum(arr_new, 0) + 1e-10)
             arr_new_g = np.minimum(arr_new, 0) / np.min(np.minimum(arr_new, 0) + 1e-10)
             arr_new_b[b_el_mask == 1] = 1
@@ -79,6 +93,9 @@ class wave_simulation_AI:
 
             writer.append_data(outputdata)
 
+# This function was used to obtain the video https://youtu.be/uBiQsoDaGkE?t=2m44s
+# The function simulates a passage of a plane wave through a piece material with high refractive index
+# It is meant to be passed as the last argument of the wave_simulation_AI constructor
 def broadcast_func_lin_wave(t):
 
     broadcast_el = np.zeros((sz_x, sz_y), float)
@@ -95,6 +112,8 @@ def broadcast_func_lin_wave(t):
 
     return broadcast_el, broadcast_el_mask, c
 
+# This function simulates a passage of a plane wave through a prism
+# It is meant to be passed as the last argument of the wave_simulation_AI constructor
 def broadcast_func_prism_wave(t):
 
     broadcast_el = np.zeros((sz_x, sz_y), float)
@@ -113,7 +132,9 @@ def broadcast_func_prism_wave(t):
 
     return broadcast_el, broadcast_el_mask, c
 
-def broadcast_func_circle(t):
+# This function simulates a passage of a plane wave through a lens
+# It is meant to be passed as the last argument of the wave_simulation_AI constructor
+def broadcast_func_circlular_lens(t):
     broadcast_el = np.zeros((sz_x, sz_y), float)
     broadcast_el_mask = np.zeros((sz_x, sz_y), int)
 
@@ -131,6 +152,8 @@ def broadcast_func_circle(t):
 
     return broadcast_el, broadcast_el_mask, c
 
+# This function simulates a passage of a plane wave through a Fresnel lens
+# It is meant to be passed as the last argument of the wave_simulation_AI constructor
 def broadcast_func_fresnel(t):
     broadcast_el = np.zeros((sz_x, sz_y), float)
     broadcast_el_mask = np.zeros((sz_x, sz_y), int)
@@ -154,6 +177,8 @@ def broadcast_func_fresnel(t):
 
     return broadcast_el, broadcast_el_mask, c
 
+# This function simulates a passage of a plane wave through a blazed grating
+# It is meant to be passed as the last argument of the wave_simulation_AI constructor
 def broadcast_func_blazed_grading(t):
 
     broadcast_el = np.zeros((sz_x, sz_y), float)
