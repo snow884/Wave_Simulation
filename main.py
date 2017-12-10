@@ -67,7 +67,7 @@ class wave_simulation_AI:
 
         outputdata = np.zeros((self.sz_x, self.sz_y, 3), int)
 
-        writer = imageio.get_writer('/Users/ivanskya/Documents/PycharmProjects/WaveProp/out/test.mp4', fps=30)
+        writer = imageio.get_writer('/Your_out_path_goes_here/test.mp4', fps=30)
 
         for t in range(0, self.steps):
 
