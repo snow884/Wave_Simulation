@@ -331,7 +331,7 @@ def broadcast_func_radar(t):
 
     return broadcast_el, broadcast_el_mask, c
 
-waveguide_img = misc.imread('/Users/ivanskya/Documents/PycharmProjects/WaveProp/kepler_telescope.bmp')
+waveguide_img = misc.imread('/Path_to_your_image_goes_here/kepler_telescope.bmp')
 
 def broadcast_func_image(t):
 
